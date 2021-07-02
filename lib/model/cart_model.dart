@@ -1,4 +1,5 @@
 import 'package:salla/model/favorite_model.dart';
+import 'package:salla/model/home_model.dart';
 
 class CartModel {
   bool status;
@@ -22,10 +23,10 @@ class CartData {
 
 class Data {
   dynamic quantity;
-  ProductInfo productCartInfo;
+  ProductModel productCartInfo;
 
   Data.fromJson(Map<String, dynamic> json) {
     quantity = json['quantity'];
-    productCartInfo = ProductInfo.fromJson(json['product']);
+    productCartInfo = ProductModel.fromJson(json['product']);
   }
 }

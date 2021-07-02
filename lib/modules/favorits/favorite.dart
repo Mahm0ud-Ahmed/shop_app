@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:salla/model/favorite_model.dart';
 import 'package:salla/model/favorite_state_model.dart';
 import 'package:salla/modules/favorits/favorite_states.dart';
+import 'package:salla/modules/item_details/item_details.dart';
 import 'package:salla/modules/product/cubit.dart';
 import 'package:salla/shared/component/components.dart';
 import 'package:salla/shared/network/local/salla_States.dart';
@@ -72,6 +73,7 @@ class Favorite extends StatelessWidget {
                       },
                       isCart: ProductCubit.get(context).cartProduct[
                           favoriteModel.data.products[index].productInfo.id],
+                      onPressed: () {},
                     );
                   },
                   gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(

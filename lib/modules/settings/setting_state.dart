@@ -15,3 +15,7 @@ class LoadingUpdateSettingState extends SallaStates {}
 class SuccessUpdateSettingState extends SallaStates {}
 
 class ErrorUpdateSettingState extends SallaStates {}
+
+class SuccessImageSettingState extends SallaStates {}
+
+class ErrorImageSettingState extends SallaStates {}

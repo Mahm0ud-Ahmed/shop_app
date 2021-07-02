@@ -28,4 +28,8 @@ class StoragePref {
   static Future<bool> removeValue(String key) async {
     return await _preferences.remove(key);
   }
+
+  static Future<bool> clearStorage() async {
+    return await _preferences.clear();
+  }
 }

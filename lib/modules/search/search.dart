@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:salla/model/search_model.dart';
+import 'package:salla/modules/item_details/item_details.dart';
 import 'package:salla/modules/search/cubit.dart';
 import 'package:salla/modules/search/search_state.dart';
 import 'package:salla/shared/component/components.dart';
@@ -52,8 +53,17 @@ class Search extends StatelessWidget {
                       Expanded(
                         child: ListView.builder(
                           itemBuilder: (context, index) {
-                            return buildItemSearch(
-                                searchModel.data.searchItemData[index]);
+                            return GestureDetector(
+                              onTap: () {
+                                Navigator.of(context).pushNamed(
+                                  ItemDetails.ITEM_DETAILS_SCREEN,
+                                  arguments:
+                                      searchModel.data.searchItemData[index],
+                                );
+                              },
+                              child: buildItemSearch(
+                                  searchModel.data.searchItemData[index]),
+                            );
                           },
                           itemCount: searchModel.data.total,
                           physics: BouncingScrollPhysics(),

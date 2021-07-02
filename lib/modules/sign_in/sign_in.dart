@@ -44,8 +44,8 @@ class _SignInState extends State<SignIn> {
         currentState = state;
         user = LoginCubit.get(context).userList;
         if (state is SuccessSignInState) {
-          pushAndReplace(context, NavigationBar.NAVIGATION_BAR_SCREEN);
           if (user.status) {
+            pushAndReplace(context, NavigationBar.NAVIGATION_BAR_SCREEN);
             Flushbar(
               title: 'Alert!',
               message: user.message,
@@ -137,6 +137,8 @@ class _SignInState extends State<SignIn> {
                                           password: _passController.text,
                                           url: END_POINT_SIGN_IN,
                                           context: context);
+                                      print(
+                                          '${_userController.text}\n ${_passController.text}');
                                     }
                                   },
                                   child: Text(

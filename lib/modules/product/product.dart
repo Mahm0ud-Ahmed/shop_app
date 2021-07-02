@@ -6,6 +6,7 @@ import 'package:salla/model/favorite_state_model.dart';
 import 'package:salla/model/home_model.dart';
 import 'package:salla/modules/cart/cart.dart';
 import 'package:salla/modules/favorits/favorite_states.dart';
+import 'package:salla/modules/item_details/item_details.dart';
 import 'package:salla/modules/product/cubit.dart';
 import 'package:salla/shared/component/components.dart';
 import 'package:salla/shared/network/local/salla_States.dart';
@@ -108,6 +109,12 @@ class Product extends StatelessWidget {
                       },
                       isCart: ProductCubit.get(context)
                           .cartProduct[homeModel.data.products[index].id],
+                      onPressed: () {
+                        Navigator.of(context).pushNamed(
+                          ItemDetails.ITEM_DETAILS_SCREEN,
+                          arguments: homeModel.data.products[index],
+                        );
+                      },
                     );
                   },
                   gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(

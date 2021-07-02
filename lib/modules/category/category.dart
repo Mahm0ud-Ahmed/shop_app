@@ -5,9 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:salla/model/category_model.dart';
 import 'package:salla/model/home_model.dart';
 import 'package:salla/modules/product/cubit.dart';
-import 'package:salla/modules/product/product_states.dart';
 import 'package:salla/modules/search/search.dart';
-import 'package:salla/modules/sign_in/sign_in_states.dart';
 import 'package:salla/shared/component/components.dart';
 import 'package:salla/shared/network/local/salla_States.dart';
 import 'package:salla/shared/style/colors.dart';
@@ -95,9 +93,12 @@ class Category extends StatelessWidget {
                           gridDelegate:
                               SliverGridDelegateWithMaxCrossAxisExtent(
                             maxCrossAxisExtent: 140,
-                            childAspectRatio: 2.5 / 3,
+                            childAspectRatio: 2.5 / 3.24,
                           ),
                           itemCount: categoryModel.data.data.length,
+                        ),
+                        SizedBox(
+                          height: 25,
                         ),
                       ],
                     ),
@@ -135,6 +136,7 @@ class Category extends StatelessWidget {
         Text(
           model.name,
           style: Theme.of(context).textTheme.bodyText1.copyWith(fontSize: 16),
+          textAlign: TextAlign.center,
         )
       ],
     );

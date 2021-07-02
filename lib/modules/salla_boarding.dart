@@ -140,20 +140,26 @@ class _SallaBoardingState extends State<SallaBoarding> {
         Image(
           image: AssetImage(boardingModel.image),
           fit: BoxFit.fill,
+          width: double.infinity,
+          height: MediaQuery.of(context).size.height / 3,
         ),
         SizedBox(
           height: 50,
         ),
-        Text(
-          boardingModel.title,
-          style: Theme.of(context).textTheme.headline4,
+        Expanded(
+          child: Text(
+            boardingModel.title,
+            style: Theme.of(context).textTheme.headline4,
+          ),
         ),
         SizedBox(
           height: 25,
         ),
-        Text(
-          boardingModel.discreption,
-          style: Theme.of(context).textTheme.headline6,
+        Expanded(
+          child: Text(
+            boardingModel.discreption,
+            style: Theme.of(context).textTheme.headline6,
+          ),
         ),
       ],
     );

@@ -71,6 +71,7 @@ Widget customItem({
   @required bool isCart,
   @required Function addCart,
   @required Function addFavorite,
+  @required Function onPressed,
 }) {
   return Container(
     width: double.infinity,
@@ -86,10 +87,13 @@ Widget customItem({
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Expanded(
-                  child: CachedNetworkImage(
-                    imageUrl: image,
-                    placeholder: (context, url) =>
-                        Center(child: CircularProgressIndicator()),
+                  child: GestureDetector(
+                    onTap: onPressed,
+                    child: CachedNetworkImage(
+                      imageUrl: image,
+                      placeholder: (context, url) =>
+                          Center(child: CircularProgressIndicator()),
+                    ),
                   ),
                   /*Image(
                     image: NetworkImage(

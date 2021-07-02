@@ -1,6 +1,8 @@
 import 'package:another_flushbar/flushbar.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:salla/model/user_model.dart';
 import 'package:salla/modules/settings/cubit.dart';
 import 'package:salla/modules/settings/setting_state.dart';
@@ -41,12 +43,14 @@ class _ProfileInformationState extends State<ProfileInformation> {
         child: Center(
           child: BlocConsumer<SettingCubit, SallaStates>(
             listener: (context, state) {
-              if (state is SuccessSettingState) {
+              if (state is SuccessSettingState ||
+                  state is ChangeStateExpansionSettingState) {
                 userInfoModel = SettingCubit.get(context).userInfoModel;
                 userController.text = userInfoModel.name;
                 phoneController.text = userInfoModel.phone;
                 emailController.text = userInfoModel.email;
               } else if (state is SuccessUpdateSettingState) {
+                // SettingCubit.get(context).getUserInfo();
                 userModel = SettingCubit.get(context).userModel;
                 if (userModel != null) {
                   Flushbar(
@@ -58,9 +62,87 @@ class _ProfileInformationState extends State<ProfileInformation> {
               }
             },
             builder: (context, state) {
+              userInfoModel = SettingCubit.get(context).userInfoModel;
               return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  GestureDetector(
+                    onTap: () {
+                      showModalBottomSheet(
+                          context: context,
+                          builder: (context) {
+                            return Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                ListTile(
+                                  title: Text('Photo Gallery'),
+                                  leading: Icon(
+                                    Icons.photo,
+                                    size: 24,
+                                  ),
+                                  onTap: () {
+                                    SettingCubit.get(context)
+                                        .getImage(ImageSource.gallery);
+                                    Navigator.of(context).pop();
+                                  },
+                                  minLeadingWidth: 5,
+                                ),
+                                ListTile(
+                                  title: Text('take a picture'),
+                                  leading: Icon(
+                                    Icons.camera_alt,
+                                    size: 24,
+                                  ),
+                                  onTap: () {
+                                    SettingCubit.get(context)
+                                        .getImage(ImageSource.camera);
+                                    Navigator.of(context).pop();
+                                  },
+                                  minLeadingWidth: 5,
+                                ),
+                              ],
+                            );
+                          });
+                    },
+                    child: Stack(
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(100),
+                          child: SettingCubit.get(context).image != null
+                              ? Image(
+                                  image: FileImage(
+                                      SettingCubit.get(context).image),
+                                  width: 120,
+                                  height: 120,
+                                  fit: BoxFit.cover,
+                                )
+                              : CachedNetworkImage(
+                                  width: 120,
+                                  height: 120,
+                                  fit: BoxFit.cover,
+                                  imageUrl: userInfoModel != null
+                                      ? userInfoModel.image
+                                      : 'https://www.pngitem.com/pimgs/m/24-248235_user-profile-avatar-login-account-fa-user-circle.png',
+                                  placeholder: (context, url) => Center(
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                ),
+                        ),
+                        Positioned(
+                          bottom: 0,
+                          right: 12,
+                          child: Icon(
+                            Icons.add_a_photo,
+                            size: 28,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: 14,
+                  ),
                   customTextEditing(
                     label: 'User Name',
                     controller: userController,
@@ -110,10 +192,19 @@ class _ProfileInformationState extends State<ProfileInformation> {
                       ? ElevatedButton(
                           onPressed: () {
                             if (formState.currentState.validate()) {
-                              SettingCubit.get(context).updateProfile(
-                                  name: userController.text,
-                                  phone: phoneController.text,
-                                  email: emailController.text);
+                              if (SettingCubit.get(context).base64 != null)
+                                SettingCubit.get(context).updateProfile(
+                                    image: SettingCubit.get(context).base64,
+                                    name: userController.text,
+                                    phone: phoneController.text,
+                                    email: emailController.text);
+                              else if (SettingCubit.get(context).base64 ==
+                                  null) {
+                                SettingCubit.get(context).updateProfile(
+                                    name: userController.text,
+                                    phone: phoneController.text,
+                                    email: emailController.text);
+                              }
                             }
                           },
                           child: Text(

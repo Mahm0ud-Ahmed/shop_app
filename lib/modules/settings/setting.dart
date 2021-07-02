@@ -1,7 +1,10 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:salla/model/user_model.dart';
 import 'package:salla/modules/settings/cubit.dart';
+import 'package:salla/modules/settings/setting_state.dart';
 import 'package:salla/modules/sign_in/sign_in.dart';
 import 'package:salla/shared/component/components.dart';
 import 'package:salla/shared/component/constants.dart';
@@ -13,6 +16,8 @@ class Setting extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // SettingCubit.get(context).getUserInfo();
+    UserDataLogin dataLogin;
     return Scaffold(
       appBar: AppBar(
         title: Text('Salla'),
@@ -20,54 +25,113 @@ class Setting extends StatelessWidget {
           IconButton(
               icon: Icon(Icons.logout),
               onPressed: () {
-                StoragePref.removeValue('token');
-                pushAndReplace(context, SignIn.SIGN_IN_SCREEN);
+                StoragePref.removeValue('token').then((value) {
+                  if (value) pushAndReplace(context, SignIn.SIGN_IN_SCREEN);
+                });
               })
         ],
       ),
       body: BlocConsumer<SettingCubit, SallaStates>(
-        listener: (context, state) {},
+        listener: (context, state) {
+          if (state is SuccessUpdateSettingState) {
+            // SettingCubit.get(context).getUserInfo();
+            dataLogin = SettingCubit.get(context).userInfoModel;
+          }
+        },
         builder: (context, state) {
-          return ListView(
+          dataLogin = SettingCubit.get(context).userInfoModel;
+          return SingleChildScrollView(
             physics: BouncingScrollPhysics(),
-            children: [
-              Container(
-                padding: EdgeInsets.all(6),
-                child: Card(
-                  elevation: 4,
-                  child: ExpansionPanelList(
-                    expansionCallback: (position, expanded) {
-                      SettingCubit.get(context)
-                          .changeExpanded(position, !expanded);
-                    },
-                    children: SettingCubit.get(context)
-                        .itemExpansion
-                        .map<ExpansionPanel>((item) {
-                      return ExpansionPanel(
-                        headerBuilder: (context, isExpanded) {
-                          return Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 6),
-                            child: Text(
-                              item.title,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .headline6
-                                  .copyWith(
-                                    color: Colors.black,
-                                    fontSize: 18,
-                                  ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  height: 12,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 8.0),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Stack(
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(200),
+                            child: CachedNetworkImage(
+                              width: 75,
+                              height: 75,
+                              fit: BoxFit.cover,
+                              imageUrl: dataLogin != null
+                                  ? dataLogin.image
+                                  : 'https://www.pngitem.com/pimgs/m/24-248235_user-profile-avatar-login-account-fa-user-circle.png',
+                              placeholder: (context, url) => Center(
+                                child: CircularProgressIndicator(),
+                              ),
                             ),
-                          );
-                        },
-                        isExpanded: item.isExpanded,
-                        body: item.body,
-                      );
-                    }).toList(),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        width: 8,
+                      ),
+                      if (dataLogin != null)
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Welcome, ${dataLogin.name}'),
+                            Text('${dataLogin.email}'),
+                          ],
+                        ),
+                    ],
                   ),
                 ),
-              ),
-            ],
+                SizedBox(
+                  height: 6,
+                ),
+                ListView(
+                  shrinkWrap: true,
+                  physics: BouncingScrollPhysics(),
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(6),
+                      child: Card(
+                        elevation: 4,
+                        child: ExpansionPanelList(
+                          expansionCallback: (position, expanded) {
+                            SettingCubit.get(context)
+                                .changeExpanded(position, !expanded);
+                          },
+                          children: SettingCubit.get(context)
+                              .itemExpansion
+                              .map<ExpansionPanel>((item) {
+                            return ExpansionPanel(
+                              headerBuilder: (context, isExpanded) {
+                                return Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 8, vertical: 6),
+                                  child: Text(
+                                    item.title,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headline6
+                                        .copyWith(
+                                          color: Colors.black,
+                                          fontSize: 18,
+                                        ),
+                                  ),
+                                );
+                              },
+                              isExpanded: item.isExpanded,
+                              body: item.body,
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           );
         },
       ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:salla/modules/cart/cart.dart';
 import 'package:salla/modules/favorits/favorite.dart';
+import 'package:salla/modules/item_details/item_details.dart';
 import 'package:salla/modules/search/search.dart';
 import 'package:salla/modules/settings/setting.dart';
 import 'package:salla/modules/sign_in/cubit.dart';
@@ -88,6 +89,7 @@ class MyApp extends StatelessWidget {
         Setting.SETTING_SCREEN: (_) => Setting(),
         Cart.CART_SCREEN: (_) => Cart(),
         Search.SEARCH_SCREEN: (_) => Search(),
+        ItemDetails.ITEM_DETAILS_SCREEN: (_) => ItemDetails(),
       },
       themeMode: isDark ? ThemeMode.dark : ThemeMode.light,
       theme: themeLight,
