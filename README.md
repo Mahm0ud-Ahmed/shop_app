@@ -1,7 +1,7 @@
 # salla
 
 ### ScreenShot
-![ezgif com-gif-maker](https://user-images.githubusercontent.com/58610163/127703631-c77f99b0-9db1-4f1e-8510-1765cf78dc8c.gif)
+https://user-images.githubusercontent.com/58610163/127705934-1f0a2755-c166-45ed-9685-cfb35308f644.mp4
 
 ## Getting Started
 
