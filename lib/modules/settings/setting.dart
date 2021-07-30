@@ -100,6 +100,7 @@ class Setting extends StatelessWidget {
                           expansionCallback: (position, expanded) {
                             SettingCubit.get(context)
                                 .changeExpanded(position, !expanded);
+                            print(expanded);
                           },
                           children: SettingCubit.get(context)
                               .itemExpansion

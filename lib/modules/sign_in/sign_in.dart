@@ -45,7 +45,8 @@ class _SignInState extends State<SignIn> {
         user = LoginCubit.get(context).userList;
         if (state is SuccessSignInState) {
           if (user.status) {
-            pushAndReplace(context, NavigationBar.NAVIGATION_BAR_SCREEN);
+            Navigator.pushNamedAndRemoveUntil(
+                context, NavigationBar.NAVIGATION_BAR_SCREEN, (route) => false);
             Flushbar(
               title: 'Alert!',
               message: user.message,

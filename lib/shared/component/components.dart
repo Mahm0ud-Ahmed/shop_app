@@ -13,7 +13,7 @@ void pushInStack(context, routeName) {
 
 Widget customTextEditing({
   @required String label,
-  TextEditingController controller,
+  @required TextEditingController controller,
   @required Icon icon,
   Function valid,
   Function onSubmit,
