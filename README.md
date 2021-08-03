@@ -1,8 +1,7 @@
 # salla
 
 ### ScreenShot
-
-https://user-images.githubusercontent.com/58610163/127699309-840428e8-77a6-447a-9212-d87ccad4888c.mp4
+https://user-images.githubusercontent.com/58610163/127705934-1f0a2755-c166-45ed-9685-cfb35308f644.mp4
 
 ## Getting Started
 
