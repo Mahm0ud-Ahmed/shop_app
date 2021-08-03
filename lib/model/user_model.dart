@@ -26,7 +26,7 @@ class UserDataLogin {
   String phone;
   String image;
   int points;
-  int credit;
+  double credit;
   String token;
 
   UserDataLogin.fromJson(Map<String, dynamic> data) {
