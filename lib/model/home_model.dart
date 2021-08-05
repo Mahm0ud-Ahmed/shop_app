@@ -42,7 +42,7 @@ class ProductModel {
   String image;
   String name;
   String description;
-  List<String> images = [];
+  List<dynamic> images = [];
   bool inFavorites;
   bool inCart;
 
@@ -54,9 +54,7 @@ class ProductModel {
     image = json['image'];
     name = json['name'];
     description = json['description'];
-    json['images'].forEach((element) {
-      images.add(element);
-    });
+    images = json['images'];
     inFavorites = json['in_favorites'];
     inCart = json['in_cart'];
   }

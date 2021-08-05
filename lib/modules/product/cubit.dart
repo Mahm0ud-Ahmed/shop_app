@@ -1,6 +1,8 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:salla/model/cart_model.dart';
 import 'package:salla/model/cart_state_model.dart';
+import 'package:salla/model/category_details_model.dart';
 import 'package:salla/model/category_model.dart';
 import 'package:salla/model/favorite_model.dart';
 import 'package:salla/model/favorite_state_model.dart';
@@ -19,26 +21,35 @@ class ProductCubit extends Cubit<SallaStates> {
 
   HomeModel homeModel;
 
+  CategoryDetailsModel categoryDetails;
   CategoryModel categoryModel;
 
   FavoriteModel favoriteModel;
   FavoriteStateModel favoriteStateModel;
-  Map<dynamic, bool> favoriteProduct = {};
 
-  CartModel cartModel;
   CartStateModel cartStateModel;
-  Map<dynamic, bool> cartProduct = {};
+  CartModel cartModel;
 
-  void getProductData() {
+  Map<dynamic, bool> favoriteHomeProduct = {};
+  Map<dynamic, bool> favoriteScreenProduct = {};
+  Map<dynamic, bool> favoriteCategoryDetails = {};
+  Map<dynamic, bool> favoriteCartScreen = {};
+
+  Map<dynamic, bool> cartHomeProduct = {};
+  Map<dynamic, bool> cartScreenProduct = {};
+  Map<dynamic, bool> cartCategoryDetails = {};
+
+  void getHomeProductData() {
     emit(LoadingProductState());
     SallaDioHelper.getData(endPointUrl: END_POINT_HOME, token: token)
         .then((value) {
       homeModel = HomeModel.fromJson(value.data);
+      // extractFavoriteAndCartFromProducts(homeModel);
       homeModel.data.products.forEach((element) {
-        favoriteProduct.addAll({element.id: element.inFavorites});
+        favoriteHomeProduct.addAll({element.id: element.inFavorites});
       });
       homeModel.data.products.forEach((element) {
-        cartProduct.addAll({element.id: element.inCart});
+        cartHomeProduct.addAll({element.id: element.inCart});
         // print(homeModel.data.products[0].name);
       });
       emit(SuccessProductState());
@@ -66,6 +77,9 @@ class ProductCubit extends Cubit<SallaStates> {
     SallaDioHelper.getData(endPointUrl: END_POINT_FAVORITE, token: token)
         .then((value) {
       favoriteModel = FavoriteModel.fromJson(value.data);
+      favoriteModel.data.products.forEach((element) {
+        favoriteScreenProduct.addAll({element.productInfo.id: true});
+      });
       // print(favoriteModel.data.products[0].productInfo.discount);
       emit(SuccessFavoriteState());
     }).catchError((error) {
@@ -74,12 +88,12 @@ class ProductCubit extends Cubit<SallaStates> {
     });
   }
 
-  void changeStateFavItem(int id) {
-    favoriteProduct[id] = !favoriteProduct[id];
+  void changeStateFavItem(Map<dynamic, bool> favorite, int id) {
+    favorite[id] = !favorite[id];
   }
 
-  void addOrRemoveFavorite(int modelId) {
-    changeStateFavItem(modelId);
+  void addOrRemoveFavorite(Map<dynamic, bool> favorite, int modelId) {
+    changeStateFavItem(favorite, modelId);
     emit(SuccessProductState());
     SallaDioHelper.postData(
             endPointUrl: END_POINT_FAVORITE,
@@ -89,13 +103,13 @@ class ProductCubit extends Cubit<SallaStates> {
       favoriteStateModel = FavoriteStateModel.fromJson(value.data);
       emit(ChangeFavoriteState());
       if (!favoriteStateModel.status) {
-        changeStateFavItem(modelId);
+        changeStateFavItem(favorite, modelId);
         emit(SuccessFavoriteState());
       } else {
         getFavoriteData();
       }
     }).catchError((error) {
-      changeStateFavItem(modelId);
+      changeStateFavItem(favorite, modelId);
       print(error.toString());
       emit(ErrorFavoriteState());
     });
@@ -106,8 +120,15 @@ class ProductCubit extends Cubit<SallaStates> {
     SallaDioHelper.getData(endPointUrl: END_POINT_CART, token: token)
         .then((value) {
       cartModel = CartModel.fromJson(value.data);
+      cartModel.data.productsCart.forEach((element) {
+        favoriteCartScreen.addAll(
+            {element.productCartInfo.id: element.productCartInfo.inFavorites});
+      });
+      cartModel.data.productsCart.forEach((element) {
+        cartScreenProduct.addAll(
+            {element.productCartInfo.id: element.productCartInfo.inCart});
+      });
       // print(cartModel.data.productsCart[0].productCartInfo.price);
-
       emit(SuccessCartState());
     }).catchError((error) {
       print(error.toString());
@@ -115,12 +136,12 @@ class ProductCubit extends Cubit<SallaStates> {
     });
   }
 
-  void changeStateCartItem(int id) {
-    cartProduct[id] = !cartProduct[id];
+  void changeStateCartItem(Map<dynamic, bool> cart, int id) {
+    cart[id] = !cart[id];
   }
 
-  void addOrRemoveCart(int modelId) {
-    changeStateCartItem(modelId);
+  void addOrRemoveCart(Map<dynamic, bool> cart, int modelId) {
+    changeStateCartItem(cart, modelId);
     emit(SuccessProductState());
     SallaDioHelper.postData(
             endPointUrl: END_POINT_CART,
@@ -130,15 +151,50 @@ class ProductCubit extends Cubit<SallaStates> {
       cartStateModel = CartStateModel.fromJson(value.data);
       emit(ChangeCartState());
       if (!cartStateModel.status) {
-        changeStateCartItem(modelId);
+        changeStateCartItem(cart, modelId);
         emit(SuccessCartState());
       } else {
         getCartData();
       }
     }).catchError((error) {
-      changeStateCartItem(modelId);
+      changeStateCartItem(cart, modelId);
       print(error.toString());
       emit(ErrorCartState());
     });
   }
+
+  getCategoryDetails({@required int categoryId}) {
+    emit(LoadingCategoryDetailsState());
+    // categoryDetails.data.products.clear();
+    String endPoint = END_POINT_CATEGORY + categoryId.toString();
+    SallaDioHelper.getData(endPointUrl: endPoint, token: token).then((value) {
+      if (value != null) {
+        // print(value.data);
+        categoryDetails = CategoryDetailsModel.fromJson(value.data);
+        categoryDetails.data.products.forEach((element) {
+          favoriteCategoryDetails.addAll({element.id: element.inFavorites});
+        });
+        categoryDetails.data.products.forEach((element) {
+          cartCategoryDetails.addAll({element.id: element.inCart});
+        });
+        emit(SuccessCategoryDetailsState());
+      }
+    }).catchError((error) {
+      print(error.toString());
+      emit(ErrorCategoryDetailsState());
+    });
+  }
+
+/*extractFavoriteAndCartFromProducts(allProduct) {
+    if (allProduct != null) {
+      allProduct.data.products.forEach((element) {
+        // print(element.id);
+        favoriteCategoryDetails.addAll({element.id: element.inFavorites});
+        favoriteHomeProduct.addAll({element.id: element.inFavorites});
+        cartProduct.add({element.id: element.inCart});
+      });
+      print(favoriteCategoryDetails.length);
+    }
+  }*/
+
 }

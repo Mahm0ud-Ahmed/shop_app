@@ -41,7 +41,7 @@ class Favorite extends StatelessWidget {
               ? GridView.builder(
                   physics: BouncingScrollPhysics(),
                   itemBuilder: (BuildContext context, int index) {
-                    return customItem(
+                    return customGridItem(
                       context: context,
                       image:
                           favoriteModel.data.products[index].productInfo.image,
@@ -53,7 +53,8 @@ class Favorite extends StatelessWidget {
                           .data.products[index].productInfo.oldPrice,
                       discount: favoriteModel
                           .data.products[index].productInfo.discount,
-                      favoriteIcon: ProductCubit.get(context).favoriteProduct[
+                      favoriteIcon: ProductCubit.get(context)
+                                  .favoriteScreenProduct[
                               favoriteModel.data.products[index].productInfo.id]
                           ? Icon(
                               Icons.favorite,
@@ -63,17 +64,22 @@ class Favorite extends StatelessWidget {
                               Icons.favorite_border,
                               color: Colors.grey,
                             ),
-                      addCart: () {
-                        ProductCubit.get(context).addOrRemoveCart(
-                            favoriteModel.data.products[index].productInfo.id);
-                      },
                       addFavorite: () {
                         ProductCubit.get(context).addOrRemoveFavorite(
+                            ProductCubit.get(context).favoriteScreenProduct,
                             favoriteModel.data.products[index].productInfo.id);
                       },
-                      isCart: ProductCubit.get(context).cartProduct[
-                          favoriteModel.data.products[index].productInfo.id],
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) {
+                            return ItemDetails(
+                              id: favoriteModel
+                                  .data.products[index].productInfo.id,
+                            );
+                          }),
+                        );
+                      },
+                      showAddCart: false,
                     );
                   },
                   gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(

@@ -16,6 +16,13 @@ class SuccessCategoryState extends SallaStates {}
 
 class ErrorCategoryState extends SallaStates {}
 
+// Category Details States
+class LoadingCategoryDetailsState extends SallaStates {}
+
+class SuccessCategoryDetailsState extends SallaStates {}
+
+class ErrorCategoryDetailsState extends SallaStates {}
+
 // Favorites States
 
 class ChangeFavoriteProductState extends SallaStates {}

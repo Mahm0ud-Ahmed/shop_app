@@ -60,7 +60,7 @@ Widget customTextEditing({
   );
 }
 
-Widget customItem({
+Widget customGridItem({
   @required BuildContext context,
   @required String image,
   @required String nameProduct,
@@ -68,10 +68,11 @@ Widget customItem({
   @required dynamic oldPrice,
   @required dynamic discount,
   @required Icon favoriteIcon,
-  @required bool isCart,
-  @required Function addCart,
+  bool isCart,
+  Function addCart,
+  @required bool showAddCart,
   @required Function addFavorite,
-  @required Function onPressed,
+  Function onPressed,
 }) {
   return Container(
     width: double.infinity,
@@ -137,24 +138,28 @@ Widget customItem({
                             ),
                         ],
                       ),
-                      SizedBox(
-                        width: double.infinity,
-                        child: isCart
-                            ? ElevatedButton.icon(
-                                onPressed: addCart,
-                                label: Text('Added'),
-                                icon: Icon(Icons.check),
-                                style: ButtonStyle(
-                                  backgroundColor: MaterialStateProperty.all(
-                                      Colors.green.shade300),
-                                ),
-                              )
-                            : ElevatedButton.icon(
-                                onPressed: addCart,
-                                label: Text('Add to cart'),
-                                icon: Icon(Icons.add_shopping_cart_outlined),
-                              ),
-                      ),
+                      showAddCart
+                          ? SizedBox(
+                              width: double.infinity,
+                              child: isCart
+                                  ? ElevatedButton.icon(
+                                      onPressed: addCart,
+                                      label: Text('Added'),
+                                      icon: Icon(Icons.check),
+                                      style: ButtonStyle(
+                                        backgroundColor:
+                                            MaterialStateProperty.all(
+                                                Colors.green.shade300),
+                                      ),
+                                    )
+                                  : ElevatedButton.icon(
+                                      onPressed: addCart,
+                                      label: Text('Add to cart'),
+                                      icon: Icon(
+                                          Icons.add_shopping_cart_outlined),
+                                    ),
+                            )
+                          : Container(),
                     ],
                   ),
                 ),
@@ -162,20 +167,7 @@ Widget customItem({
             ),
           ),
           Row(
-            // mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              // if (discount != 0)
-              //   Banner(
-              //     message: 'SALE',
-              //     location: BannerLocation.topStart,
-              //   ),
-              /*Text(
-                    'DISCOUNT',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),*/
-              // decoration: BoxDecoration(color: Colors.amber.withOpacity(1)),
               Spacer(),
               IconButton(icon: favoriteIcon, onPressed: addFavorite),
             ],

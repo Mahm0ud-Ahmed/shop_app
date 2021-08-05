@@ -34,8 +34,6 @@ class ProductInfo {
   String image;
   String name;
   String description;
-  bool inFavorites;
-  bool inCart;
 
   ProductInfo.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -45,7 +43,5 @@ class ProductInfo {
     image = json['image'];
     name = json['name'];
     description = json['description'];
-    inFavorites = json['in_favorites'];
-    inCart = json['in_cart'];
   }
 }

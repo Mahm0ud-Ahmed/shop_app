@@ -82,39 +82,46 @@ class Product extends StatelessWidget {
               ? GridView.builder(
                   physics: BouncingScrollPhysics(),
                   itemBuilder: (BuildContext context, int index) {
-                    return customItem(
+                    return customGridItem(
                       context: context,
                       image: homeModel.data.products[index].image,
                       nameProduct: homeModel.data.products[index].name,
                       price: homeModel.data.products[index].price,
                       oldPrice: homeModel.data.products[index].oldPrice,
                       discount: homeModel.data.products[index].discount,
-                      favoriteIcon: ProductCubit.get(context).favoriteProduct[
-                              homeModel.data.products[index].id]
-                          ? Icon(
-                              Icons.favorite,
-                              color: Colors.red,
-                            )
-                          : Icon(
-                              Icons.favorite_border,
-                              color: Colors.grey,
-                            ),
+                      favoriteIcon:
+                          ProductCubit.get(context).favoriteHomeProduct[
+                                  homeModel.data.products[index].id]
+                              ? Icon(
+                                  Icons.favorite,
+                                  color: Colors.red,
+                                )
+                              : Icon(
+                                  Icons.favorite_border,
+                                  color: Colors.grey,
+                                ),
+                      isCart: ProductCubit.get(context)
+                          .cartHomeProduct[homeModel.data.products[index].id],
                       addCart: () {
-                        ProductCubit.get(context)
-                            .addOrRemoveCart(homeModel.data.products[index].id);
+                        ProductCubit.get(context).addOrRemoveCart(
+                            ProductCubit.get(context).cartHomeProduct,
+                            homeModel.data.products[index].id);
                       },
                       addFavorite: () {
                         ProductCubit.get(context).addOrRemoveFavorite(
+                            ProductCubit.get(context).favoriteHomeProduct,
                             homeModel.data.products[index].id);
                       },
-                      isCart: ProductCubit.get(context)
-                          .cartProduct[homeModel.data.products[index].id],
                       onPressed: () {
-                        Navigator.of(context).pushNamed(
-                          ItemDetails.ITEM_DETAILS_SCREEN,
-                          arguments: homeModel.data.products[index],
+                        Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) {
+                            return ItemDetails(
+                              id: homeModel.data.products[index].id,
+                            );
+                          }),
                         );
                       },
+                      showAddCart: true,
                     );
                   },
                   gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(

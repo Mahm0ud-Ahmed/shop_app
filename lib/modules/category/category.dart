@@ -2,9 +2,12 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:salla/model/category_details_model.dart';
 import 'package:salla/model/category_model.dart';
 import 'package:salla/model/home_model.dart';
+import 'package:salla/modules/category/category_details/category_details.dart';
 import 'package:salla/modules/product/cubit.dart';
+import 'package:salla/modules/product/product_states.dart';
 import 'package:salla/modules/search/search.dart';
 import 'package:salla/shared/component/components.dart';
 import 'package:salla/shared/network/local/salla_States.dart';
@@ -18,11 +21,25 @@ class Category extends StatelessWidget {
     HomeModel model;
     CategoryModel categoryModel;
     return BlocConsumer<ProductCubit, SallaStates>(
-      listener: (BuildContext context, state) {},
+      listener: (BuildContext context, state) {
+        if (state is LoadingCategoryDetailsState) {
+          CategoryDetailsModel category =
+              ProductCubit.get(context).categoryDetails;
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => CategoryDetails(
+                category: category,
+              ),
+            ),
+          );
+        }
+      },
       builder: (BuildContext context, state) {
         model = ProductCubit.get(context).homeModel;
         categoryModel = ProductCubit.get(context).categoryModel;
         // print('Mooooooooooodel ${model.data.products[0].name}');
+
         return Scaffold(
           appBar: AppBar(
             title: Text('Salla'),
@@ -111,34 +128,39 @@ class Category extends StatelessWidget {
   }
 
   Widget buildItem(context, CategoryData model) {
-    return Column(
-      children: [
-        Container(
-          padding: EdgeInsets.all(20),
-          width: 100,
-          height: 100,
-          decoration: BoxDecoration(
-              // borderRadius: BorderRadius.circular(150),
-              shape: BoxShape.circle,
-              border: Border.all(width: 4.0, color: colorPrim)),
-          child: CircleAvatar(
-            maxRadius: 100,
-            child: CachedNetworkImage(
-              imageUrl: model.image.toString(),
-              width: double.infinity,
-              fit: BoxFit.cover,
-              placeholder: (context, url) =>
-                  Center(child: CircularProgressIndicator()),
+    return GestureDetector(
+      onTap: () {
+        ProductCubit.get(context).getCategoryDetails(categoryId: model.id);
+      },
+      child: Column(
+        children: [
+          Container(
+            padding: EdgeInsets.all(20),
+            width: 100,
+            height: 100,
+            decoration: BoxDecoration(
+                // borderRadius: BorderRadius.circular(150),
+                shape: BoxShape.circle,
+                border: Border.all(width: 4.0, color: colorPrim)),
+            child: CircleAvatar(
+              maxRadius: 100,
+              child: CachedNetworkImage(
+                imageUrl: model.image.toString(),
+                width: double.infinity,
+                fit: BoxFit.cover,
+                placeholder: (context, url) =>
+                    Center(child: CircularProgressIndicator()),
+              ),
+              backgroundColor: Colors.white,
             ),
-            backgroundColor: Colors.white,
           ),
-        ),
-        Text(
-          model.name,
-          style: Theme.of(context).textTheme.bodyText1.copyWith(fontSize: 16),
-          textAlign: TextAlign.center,
-        )
-      ],
+          Text(
+            model.name,
+            style: Theme.of(context).textTheme.bodyText1.copyWith(fontSize: 16),
+            textAlign: TextAlign.center,
+          )
+        ],
+      ),
     );
   }
 }

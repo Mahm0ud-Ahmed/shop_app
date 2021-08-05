@@ -1,9 +1,6 @@
-import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:salla/model/cart_model.dart';
-import 'package:salla/model/favorite_state_model.dart';
-import 'package:salla/modules/favorits/favorite_states.dart';
 import 'package:salla/modules/item_details/item_details.dart';
 import 'package:salla/modules/product/cubit.dart';
 import 'package:salla/shared/component/components.dart';
@@ -39,7 +36,7 @@ class Cart extends StatelessWidget {
               ? GridView.builder(
                   physics: BouncingScrollPhysics(),
                   itemBuilder: (BuildContext context, int index) {
-                    return customItem(
+                    return customGridItem(
                       context: context,
                       image: cartModel
                           .data.productsCart[index].productCartInfo.image,
@@ -51,34 +48,43 @@ class Cart extends StatelessWidget {
                           .data.productsCart[index].productCartInfo.oldPrice,
                       discount: cartModel
                           .data.productsCart[index].productCartInfo.discount,
-                      favoriteIcon: ProductCubit.get(context).favoriteProduct[
-                              cartModel
+                      favoriteIcon:
+                          ProductCubit.get(context).favoriteCartScreen[cartModel
                                   .data.productsCart[index].productCartInfo.id]
-                          ? Icon(
-                              Icons.favorite,
-                              color: Colors.red,
-                            )
-                          : Icon(
-                              Icons.favorite_border,
-                              color: Colors.grey,
-                            ),
+                              ? Icon(
+                                  Icons.favorite,
+                                  color: Colors.red,
+                                )
+                              : Icon(
+                                  Icons.favorite_border,
+                                  color: Colors.grey,
+                                ),
                       addCart: () {
-                        ProductCubit.get(context).addOrRemoveCart(cartModel
-                            .data.productsCart[index].productCartInfo.id);
+                        ProductCubit.get(context).addOrRemoveCart(
+                            ProductCubit.get(context).cartScreenProduct,
+                            cartModel
+                                .data.productsCart[index].productCartInfo.id);
                       },
                       addFavorite: () {
-                        ProductCubit.get(context).addOrRemoveFavorite(cartModel
-                            .data.productsCart[index].productCartInfo.id);
+                        ProductCubit.get(context).addOrRemoveFavorite(
+                            ProductCubit.get(context).favoriteHomeProduct,
+                            cartModel
+                                .data.productsCart[index].productCartInfo.id);
                       },
-                      isCart: ProductCubit.get(context).cartProduct[cartModel
-                          .data.productsCart[index].productCartInfo.id],
+                      isCart: ProductCubit.get(context).cartScreenProduct[
+                          cartModel
+                              .data.productsCart[index].productCartInfo.id],
                       onPressed: () {
-                        Navigator.of(context).pushNamed(
-                          ItemDetails.ITEM_DETAILS_SCREEN,
-                          arguments: cartModel
-                              .data.productsCart[index].productCartInfo,
+                        Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) {
+                            return ItemDetails(
+                              id: cartModel
+                                  .data.productsCart[index].productCartInfo.id,
+                            );
+                          }),
                         );
                       },
+                      showAddCart: true,
                     );
                   },
                   gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(

@@ -1,54 +1,75 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:salla/model/home_model.dart';
+import 'package:salla/model/item_details_model.dart';
 import 'package:salla/modules/item_details/cubit.dart';
+import 'package:salla/modules/item_details/states.dart';
 import 'package:salla/shared/network/local/salla_States.dart';
 import 'package:salla/shared/style/colors.dart';
 
-class ItemDetails extends StatelessWidget {
+class ItemDetails extends StatefulWidget {
   static const String ITEM_DETAILS_SCREEN = 'item_details';
+
+  int id;
+
+  ItemDetails({this.id});
+
+  @override
+  _ItemDetailsState createState() => _ItemDetailsState();
+}
+
+class _ItemDetailsState extends State<ItemDetails> {
   int currentIndex = 0;
+
   ItemDetailsCubit detailsCubit;
-  dynamic model;
+
+  ItemDetailsModel itemDetailsModel;
+  @override
+  void initState() {
+    super.initState();
+    detailsCubit = ItemDetailsCubit.get(context);
+    detailsCubit.getItemDetailsFromServer(widget.id);
+  }
 
   @override
   Widget build(BuildContext context) {
-    model = ModalRoute.of(context).settings.arguments;
-    return BlocProvider<ItemDetailsCubit>(
-      create: (BuildContext context) {
-        return ItemDetailsCubit();
+    return BlocConsumer<ItemDetailsCubit, SallaStates>(
+      listener: (BuildContext context, state) {
+        if (state is SuccessItemDetailsState) {
+          itemDetailsModel = detailsCubit.itemDetailsModel;
+          // print(itemDetailsModel.data.name);
+        }
       },
-      child: BlocConsumer<ItemDetailsCubit, SallaStates>(
-        listener: (BuildContext context, state) {},
-        builder: (BuildContext context, state) {
-          detailsCubit = ItemDetailsCubit.get(context);
-          currentIndex = detailsCubit.currentIndexImage;
-          return Scaffold(
-            appBar: AppBar(
-              title: Text('Salla'),
+      builder: (BuildContext context, state) {
+        currentIndex = detailsCubit.currentIndexImage;
+        return Scaffold(
+          appBar: AppBar(
+            title: Text('Salla'),
+          ),
+          body: Center(
+            child: SingleChildScrollView(
+              child: itemDetailsModel != null
+                  ? Column(
+                      children: [
+                        SizedBox(
+                          height: 12,
+                        ),
+                        buildHeadItem(itemDetailsModel, context),
+                        SizedBox(
+                          height: 12,
+                        ),
+                        buildDescriptionItem(itemDetailsModel, context),
+                      ],
+                    )
+                  : Center(child: CircularProgressIndicator()),
             ),
-            body: SingleChildScrollView(
-              child: Column(
-                children: [
-                  SizedBox(
-                    height: 12,
-                  ),
-                  buildHeadItem(model, context),
-                  SizedBox(
-                    height: 12,
-                  ),
-                  buildDescriptionItem(model, context),
-                ],
-              ),
-            ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 
-  Widget buildHeadItem(ProductModel model, context) {
+  Widget buildHeadItem(ItemDetailsModel model, context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -75,7 +96,7 @@ class ItemDetails extends StatelessWidget {
                     });
               },
               child: CachedNetworkImage(
-                imageUrl: model.images[currentIndex],
+                imageUrl: model.data.images[currentIndex],
                 placeholder: (context, url) =>
                     Center(child: CircularProgressIndicator()),
               ),
@@ -92,8 +113,8 @@ class ItemDetails extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              ...List.generate(model.images.length, (index) {
-                return buildSmallImage(index);
+              ...List.generate(model.data.images.length, (index) {
+                return buildSmallImage(model.data.images, index);
               }),
             ],
           ),
@@ -102,10 +123,10 @@ class ItemDetails extends StatelessWidget {
     );
   }
 
-  Widget buildSmallImage(int indexImage) {
+  Widget buildSmallImage(List<dynamic> images, int indexImage) {
     return GestureDetector(
       onTap: () {
-        detailsCubit.changeIndex(indexImage);
+        detailsCubit.changeIndex(images.length, indexImage);
       },
       child: Container(
         padding: EdgeInsets.all(4),
@@ -119,7 +140,7 @@ class ItemDetails extends StatelessWidget {
           borderRadius: BorderRadius.circular(10),
         ),
         child: CachedNetworkImage(
-          imageUrl: model.images[indexImage],
+          imageUrl: images[indexImage],
           placeholder: (context, url) =>
               Center(child: CircularProgressIndicator()),
         ),
@@ -127,7 +148,7 @@ class ItemDetails extends StatelessWidget {
     );
   }
 
-  Widget buildDescriptionItem(ProductModel model, context) {
+  Widget buildDescriptionItem(ItemDetailsModel model, context) {
     return Container(
       width: double.infinity,
       // padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
@@ -146,7 +167,7 @@ class ItemDetails extends StatelessWidget {
             padding:
                 const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 8),
             child: Text(
-              model.name,
+              model.data.name,
               style: Theme.of(context).textTheme.headline6.copyWith(
                     color: Colors.black,
                   ),
@@ -156,7 +177,7 @@ class ItemDetails extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: detailsCubit.isSeeMore
                 ? Text(
-                    model.description,
+                    model.data.description,
                     style: Theme.of(context).textTheme.bodyText1.copyWith(
                           color: Colors.grey,
                           height: 1.3,
@@ -164,7 +185,7 @@ class ItemDetails extends StatelessWidget {
                     textAlign: TextAlign.start,
                   )
                 : Text(
-                    model.description,
+                    model.data.description,
                     style: Theme.of(context).textTheme.bodyText1.copyWith(
                           color: Colors.grey,
                           height: 1.3,
@@ -209,12 +230,12 @@ class ItemDetails extends StatelessWidget {
     );
   }
 
-  Widget ImageDialog(context, ProductModel model) {
+  Widget ImageDialog(context, ItemDetailsModel model) {
     return Dialog(
       child: AnimatedContainer(
         duration: Duration(seconds: 200),
         child: CachedNetworkImage(
-          imageUrl: model.images[currentIndex],
+          imageUrl: model.data.images[currentIndex],
           placeholder: (context, url) =>
               Center(child: CircularProgressIndicator()),
         ),
