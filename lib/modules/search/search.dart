@@ -55,10 +55,13 @@ class Search extends StatelessWidget {
                           itemBuilder: (context, index) {
                             return GestureDetector(
                               onTap: () {
-                                Navigator.of(context).pushNamed(
-                                  ItemDetails.ITEM_DETAILS_SCREEN,
-                                  arguments:
-                                      searchModel.data.searchItemData[index],
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(builder: (_) {
+                                    return ItemDetails(
+                                      id: searchModel
+                                          .data.searchItemData[index].id,
+                                    );
+                                  }),
                                 );
                               },
                               child: buildItemSearch(
