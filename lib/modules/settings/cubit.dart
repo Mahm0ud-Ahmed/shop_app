@@ -2,8 +2,10 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:salla/model/address_model.dart';
 import 'package:salla/model/user_model.dart';
 import 'package:salla/modules/settings/item_model.dart';
 import 'package:salla/modules/settings/profile_information.dart';
@@ -35,6 +37,15 @@ class SettingCubit extends Cubit<SallaStates> {
       body: ProfileInformation(),
     ),
   ];
+
+  List<String> dropdownElement = ['Home', 'Work'];
+  String currentElementInDropDown;
+
+  AddressModel address;
+
+  void setValue() {
+    if (address != null) currentElementInDropDown = address.data.data[0].name;
+  }
 
   void changeExpanded(index, isExpanded) {
     itemExpansion[index].isExpanded = isExpanded;
@@ -115,5 +126,53 @@ class SettingCubit extends Cubit<SallaStates> {
     final Uint8List decode = base64Decode(encodeImage(path));
     image = File(path)..writeAsBytesSync(decode);
     // print('Fiiiiiiiiiiiiiiiile: ${image.path}');
+  }
+
+  void setNewDropdownElement(String newValue) {
+    currentElementInDropDown = newValue;
+    emit(ChangeAddressTypeState());
+  }
+
+  void getCurrentAddressForUser() {
+    SallaDioHelper.getData(endPointUrl: END_POINT_ADDRESS, token: token)
+        .then((value) {
+      // print(value.data);
+      address = AddressModel.fromJson(value.data);
+      // print(address.data.data.length);
+      emit(SuccessGetAddressState());
+    }).catchError((error) {
+      print(error.toString());
+      emit(ErrorGetAddressState());
+    });
+  }
+
+  void updateCurrentAddressForUser({
+    @required int id,
+    @required String addressType,
+    @required String city,
+    @required String region,
+    @required String details,
+    @required String notes,
+    double lat = 14.45454,
+    double mag = 12.01212154,
+  }) {
+    String endPoint = END_POINT_ADDRESS + id.toString();
+    emit(LoadingUpdateAddressState());
+    SallaDioHelper.putData(endPointUrl: endPoint, token: token, data: {
+      'name': addressType,
+      'city': city,
+      'region': region,
+      'details': details,
+      'notes': notes,
+      'latitude': lat,
+      'longitude': mag,
+    }).then((value) {
+      if (value.statusCode == 200) {
+        getCurrentAddressForUser();
+      }
+    }).catchError((error) {
+      print(error.toString());
+      emit(ErrorUpdateAddressState());
+    });
   }
 }

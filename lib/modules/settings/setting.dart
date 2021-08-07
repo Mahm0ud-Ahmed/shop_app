@@ -3,6 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:salla/model/user_model.dart';
+import 'package:salla/modules/settings/component/address_screen.dart';
 import 'package:salla/modules/settings/cubit.dart';
 import 'package:salla/modules/settings/setting_state.dart';
 import 'package:salla/modules/sign_in/sign_in.dart';
@@ -95,7 +96,7 @@ class Setting extends StatelessWidget {
                     Container(
                       padding: EdgeInsets.all(6),
                       child: Card(
-                        elevation: 4,
+                        elevation: 2,
                         child: ExpansionPanelList(
                           expansionCallback: (position, expanded) {
                             SettingCubit.get(context)
@@ -130,6 +131,23 @@ class Setting extends StatelessWidget {
                       ),
                     ),
                   ],
+                ),
+                ListTile(
+                  title: Text(
+                    'Address',
+                    style: Theme.of(context).textTheme.headline6.copyWith(
+                          color: Colors.black,
+                          fontSize: 18,
+                        ),
+                  ),
+                  leading: Icon(
+                    Icons.location_on,
+                    size: 22,
+                  ),
+                  subtitle: Text('Product Shipping Address'),
+                  onTap: () {
+                    pushInStack(context, AddressScreen.ADDRESS_SCREEN);
+                  },
                 ),
               ],
             ),

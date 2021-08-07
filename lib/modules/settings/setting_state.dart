@@ -19,3 +19,13 @@ class ErrorUpdateSettingState extends SallaStates {}
 class SuccessImageSettingState extends SallaStates {}
 
 class ErrorImageSettingState extends SallaStates {}
+
+class ChangeAddressTypeState extends SallaStates {}
+
+class SuccessGetAddressState extends SallaStates {}
+
+class ErrorGetAddressState extends SallaStates {}
+
+class LoadingUpdateAddressState extends SallaStates {}
+
+class ErrorUpdateAddressState extends SallaStates {}

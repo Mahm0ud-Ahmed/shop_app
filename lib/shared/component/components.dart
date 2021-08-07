@@ -13,7 +13,7 @@ void pushInStack(context, routeName) {
 
 Widget customTextEditing({
   @required String label,
-  @required TextEditingController controller,
+  TextEditingController controller,
   @required Icon icon,
   Function valid,
   Function onSubmit,
@@ -181,5 +181,14 @@ Widget customGridItem({
         // alignment: AlignmentDirectional.topEnd,
       ),
     ),
+  );
+}
+
+Widget customNormalText({BuildContext context, String title}) {
+  return Text(
+    title,
+    style: Theme.of(context).textTheme.headline6.copyWith(
+          color: Colors.black,
+        ),
   );
 }
