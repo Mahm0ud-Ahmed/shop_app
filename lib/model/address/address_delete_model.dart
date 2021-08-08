@@ -1,25 +1,16 @@
-class AddressModel {
+class AddressUpdateAndDelete {
   bool status;
   String message;
-  AddressData data;
-  AddressModel.fromJson(Map<String, dynamic> json) {
+  UpdateAndDeleteDataInfo data;
+
+  AddressUpdateAndDelete.fromJson(Map<String, dynamic> json) {
     status = json['status'];
     message = json['message'];
-    data = AddressData.fromJson(json['data']);
+    data = UpdateAndDeleteDataInfo.fromJson(json['data']);
   }
 }
 
-class AddressData {
-  List<Data> data = [];
-  AddressData.fromJson(Map<String, dynamic> json) {
-    // data = json['data'];
-    json['data'].forEach((element) {
-      data.add(Data.fromJson(element));
-    });
-  }
-}
-
-class Data {
+class UpdateAndDeleteDataInfo {
   int id;
   String name;
   String city;
@@ -29,7 +20,7 @@ class Data {
   double lat;
   double mag;
 
-  Data.fromJson(Map<String, dynamic> json) {
+  UpdateAndDeleteDataInfo.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
     city = json['city'];

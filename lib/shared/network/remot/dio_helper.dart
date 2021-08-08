@@ -66,4 +66,18 @@ class SallaDioHelper {
       data: data,
     );
   }
+
+  static Future<Response> deleteData({
+    @required String endPointUrl,
+    String token,
+  }) async {
+    _dio.options.headers = {
+      'Content-Type': 'application/json',
+      'lang': language,
+      'Authorization': token,
+    };
+    return await _dio.delete(
+      endPointUrl,
+    );
+  }
 }

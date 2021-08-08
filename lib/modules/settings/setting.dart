@@ -3,6 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:salla/model/user_model.dart';
+import 'package:salla/modules/settings/component/address_details.dart';
 import 'package:salla/modules/settings/component/address_screen.dart';
 import 'package:salla/modules/settings/cubit.dart';
 import 'package:salla/modules/settings/setting_state.dart';

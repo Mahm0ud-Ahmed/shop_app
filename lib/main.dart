@@ -5,6 +5,7 @@ import 'package:salla/modules/category/category_details/category_details.dart';
 import 'package:salla/modules/favorits/favorite.dart';
 import 'package:salla/modules/item_details/item_details.dart';
 import 'package:salla/modules/search/search.dart';
+import 'package:salla/modules/settings/component/address_details.dart';
 import 'package:salla/modules/settings/component/address_screen.dart';
 import 'package:salla/modules/settings/setting.dart';
 import 'package:salla/modules/sign_in/cubit.dart';
@@ -97,6 +98,7 @@ class MyApp extends StatelessWidget {
         Search.SEARCH_SCREEN: (_) => Search(),
         // ItemDetails.ITEM_DETAILS_SCREEN: (_) => ItemDetails(),
         CategoryDetails.CATEGORY_SCREEN: (_) => CategoryDetails(),
+        AddressDetails.ADDRESS_DETAILS: (_) => AddressDetails(),
         AddressScreen.ADDRESS_SCREEN: (_) => AddressScreen(),
       },
       themeMode: isDark ? ThemeMode.dark : ThemeMode.light,

@@ -7,8 +7,8 @@ void pushAndReplace(context, routeName) {
   Navigator.of(context).pushReplacementNamed(routeName);
 }
 
-void pushInStack(context, routeName) {
-  Navigator.of(context).pushNamed(routeName);
+void pushInStack(context, routeName, {Object arg}) {
+  Navigator.of(context).pushNamed(routeName, arguments: arg);
 }
 
 Widget customTextEditing({
@@ -189,6 +189,7 @@ Widget customNormalText({BuildContext context, String title}) {
     title,
     style: Theme.of(context).textTheme.headline6.copyWith(
           color: Colors.black,
+          fontSize: 16,
         ),
   );
 }

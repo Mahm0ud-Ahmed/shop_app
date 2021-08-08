@@ -29,3 +29,13 @@ class ErrorGetAddressState extends SallaStates {}
 class LoadingUpdateAddressState extends SallaStates {}
 
 class ErrorUpdateAddressState extends SallaStates {}
+
+class LoadingDeleteAddressState extends SallaStates {}
+
+class SuccessDeleteAddressState extends SallaStates {}
+
+class ErrorDeleteAddressState extends SallaStates {}
+
+class SuccessDeleteUndoAddressState extends SallaStates {}
+
+class AddOrEditAddressState extends SallaStates {}

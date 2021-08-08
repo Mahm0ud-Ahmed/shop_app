@@ -5,7 +5,8 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:salla/model/address_model.dart';
+import 'package:salla/model/address/address_delete_model.dart';
+import 'package:salla/model/address/address_model.dart';
 import 'package:salla/model/user_model.dart';
 import 'package:salla/modules/settings/item_model.dart';
 import 'package:salla/modules/settings/profile_information.dart';
@@ -41,10 +42,14 @@ class SettingCubit extends Cubit<SallaStates> {
   List<String> dropdownElement = ['Home', 'Work'];
   String currentElementInDropDown;
 
-  AddressModel address;
+  AllAddress addressGroup;
+  AddressUpdateAndDelete updateDeleteAddress;
 
-  void setValue() {
-    if (address != null) currentElementInDropDown = address.data.data[0].name;
+  bool isEditing;
+
+  changeEditState({bool isEditing}) {
+    this.isEditing = isEditing;
+    emit(AddOrEditAddressState());
   }
 
   void changeExpanded(index, isExpanded) {
@@ -134,10 +139,10 @@ class SettingCubit extends Cubit<SallaStates> {
   }
 
   void getCurrentAddressForUser() {
-    SallaDioHelper.getData(endPointUrl: END_POINT_ADDRESS, token: token)
+    SallaDioHelper.getData(endPointUrl: END_POINT_EDIT_ADDRESS, token: token)
         .then((value) {
       // print(value.data);
-      address = AddressModel.fromJson(value.data);
+      addressGroup = AllAddress.fromJson(value.data);
       // print(address.data.data.length);
       emit(SuccessGetAddressState());
     }).catchError((error) {
@@ -156,7 +161,7 @@ class SettingCubit extends Cubit<SallaStates> {
     double lat = 14.45454,
     double mag = 12.01212154,
   }) {
-    String endPoint = END_POINT_ADDRESS + id.toString();
+    String endPoint = END_POINT_EDIT_ADDRESS + id.toString();
     emit(LoadingUpdateAddressState());
     SallaDioHelper.putData(endPointUrl: endPoint, token: token, data: {
       'name': addressType,
@@ -175,4 +180,71 @@ class SettingCubit extends Cubit<SallaStates> {
       emit(ErrorUpdateAddressState());
     });
   }
+
+  void deleteUndo({int index, AllAddressData address}) {
+    addressGroup.data.data.insert(index, address);
+    emit(SuccessDeleteUndoAddressState());
+  }
+
+  void deleteAddressForUser({int id, int index, AllAddressData address}) {
+    String endPoint = END_POINT_EDIT_ADDRESS + id.toString();
+    addressGroup.data.data.removeAt(index);
+    emit(LoadingDeleteAddressState());
+    SallaDioHelper.deleteData(endPointUrl: endPoint, token: token)
+        .then((value) {
+      if (value.data != null) {
+        updateDeleteAddress = AddressUpdateAndDelete.fromJson(value.data);
+        emit(SuccessDeleteAddressState());
+      } else {
+        deleteUndo(index: index, address: address);
+      }
+    }).catchError((error) {
+      print(error.toString());
+      deleteUndo(index: index, address: address);
+      emit(ErrorDeleteAddressState());
+    });
+  }
+
+  void addAddressForUser({
+    @required String addressType,
+    @required String city,
+    @required String region,
+    @required String details,
+    String notes = '',
+    double lat = 14.45454,
+    double mag = 12.01212154,
+  }) {
+    emit(LoadingUpdateAddressState());
+    SallaDioHelper.postData(
+        endPointUrl: END_POINT_ADD_ADDRESS,
+        token: token,
+        data: {
+          'name': addressType,
+          'city': city,
+          'region': region,
+          'details': details,
+          'notes': notes,
+          'latitude': lat,
+          'longitude': mag,
+        }).then((value) {
+      if (value.statusCode == 200) {
+        getCurrentAddressForUser();
+      }
+    }).catchError((error) {
+      print(error.toString());
+      emit(ErrorUpdateAddressState());
+    });
+  }
+
+  /* void getCurrentAddressUpdate(int id) {
+    String endPoint = END_POINT_ADDRESS + id.toString();
+    SallaDioHelper.putData(endPointUrl: endPoint, token: token, data: {})
+        .then((value) {
+      updateDeleteAddress = AddressUpdateAndDelete.fromJson(value.data);
+      emit(SuccessGetAddressState());
+    }).catchError((error) {
+      print(error.toString());
+      emit(ErrorGetAddressState());
+    });
+  }*/
 }
