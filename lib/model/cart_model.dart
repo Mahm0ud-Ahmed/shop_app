@@ -13,20 +13,24 @@ class CartModel {
 
 class CartData {
   List<Data> productsCart = [];
+  dynamic total;
 
   CartData.fromJson(Map<String, dynamic> json) {
     json['cart_items'].forEach((element) {
       productsCart.add(Data.fromJson(element));
     });
+    total = json['total'];
   }
 }
 
 class Data {
   dynamic quantity;
+  int cartId;
   ProductModel productCartInfo;
 
   Data.fromJson(Map<String, dynamic> json) {
     quantity = json['quantity'];
+    cartId = json['id'];
     productCartInfo = ProductModel.fromJson(json['product']);
   }
 }

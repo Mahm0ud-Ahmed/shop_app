@@ -47,7 +47,7 @@ class CategoryDetails extends StatelessWidget {
                           discount: category.data.products[index].discount,
                           favoriteIcon:
                               ProductCubit.get(context).favoriteCategoryDetails[
-                                      category.data.products[index].id]
+                                      category.data.products[index].productId]
                                   ? Icon(
                                       Icons.favorite,
                                       color: Colors.red,
@@ -57,23 +57,23 @@ class CategoryDetails extends StatelessWidget {
                                       color: Colors.grey,
                                     ),
                           isCart: ProductCubit.get(context).cartCategoryDetails[
-                              category.data.products[index].id],
+                              category.data.products[index].productId],
                           addCart: () {
                             ProductCubit.get(context).addOrRemoveCart(
                                 ProductCubit.get(context).cartCategoryDetails,
-                                category.data.products[index].id);
+                                category.data.products[index].productId);
                           },
                           addFavorite: () {
                             ProductCubit.get(context).addOrRemoveFavorite(
                                 ProductCubit.get(context)
                                     .favoriteCategoryDetails,
-                                category.data.products[index].id);
+                                category.data.products[index].productId);
                           },
                           onPressed: () {
                             Navigator.of(context).push(
                               MaterialPageRoute(builder: (_) {
                                 return ItemDetails(
-                                  id: category.data.products[index].id,
+                                  id: category.data.products[index].productId,
                                 );
                               }),
                             );

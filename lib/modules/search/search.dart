@@ -59,7 +59,7 @@ class Search extends StatelessWidget {
                                   MaterialPageRoute(builder: (_) {
                                     return ItemDetails(
                                       id: searchModel
-                                          .data.searchItemData[index].id,
+                                          .data.searchItemData[index].productId,
                                     );
                                   }),
                                 );

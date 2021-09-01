@@ -51,7 +51,7 @@ void main() async {
     MultiBlocProvider(
       providers: [
         BlocProvider<SettingCubit>(
-          create: (context) => SettingCubit()..getUserInfo(),
+          create: (context) => SettingCubit(),
         ),
         BlocProvider<ProductCubit>(
           create: (context) => ProductCubit()

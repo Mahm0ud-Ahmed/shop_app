@@ -24,6 +24,7 @@ class _ItemDetailsState extends State<ItemDetails> {
   ItemDetailsCubit detailsCubit;
 
   ItemDetailsModel itemDetailsModel;
+
   @override
   void initState() {
     super.initState();
@@ -203,28 +204,29 @@ class _ItemDetailsState extends State<ItemDetails> {
                 ? Text('See Less')
                 : Text('See More Detail'),
           ),
-          Container(
-            width: double.infinity,
-            padding: EdgeInsets.all(40),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(35),
-                topRight: Radius.circular(35),
+          if (!model.data.inCart)
+            Container(
+              width: double.infinity,
+              padding: EdgeInsets.all(40),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(35),
+                  topRight: Radius.circular(35),
+                ),
+              ),
+              child: ElevatedButton(
+                onPressed: () {},
+                child: Text('Add To Cart'),
+                style: ButtonStyle(
+                    minimumSize: MaterialStateProperty.all(
+                      Size(double.infinity, 60),
+                    ),
+                    shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ))),
               ),
             ),
-            child: ElevatedButton(
-              onPressed: () {},
-              child: Text('Add To Cart'),
-              style: ButtonStyle(
-                  minimumSize: MaterialStateProperty.all(
-                    Size(double.infinity, 60),
-                  ),
-                  shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ))),
-            ),
-          ),
         ],
       ),
     );

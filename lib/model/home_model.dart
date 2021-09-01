@@ -35,7 +35,7 @@ class BannersModel {
 }
 
 class ProductModel {
-  int id;
+  int productId;
   dynamic price;
   dynamic oldPrice;
   dynamic discount;
@@ -47,7 +47,7 @@ class ProductModel {
   bool inCart;
 
   ProductModel.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
+    productId = json['id'];
     price = json['price'];
     oldPrice = json['old_price'];
     discount = json['discount'];

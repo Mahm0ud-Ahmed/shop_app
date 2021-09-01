@@ -12,8 +12,19 @@ import 'package:salla/shared/component/components.dart';
 import 'package:salla/shared/network/local/salla_States.dart';
 import 'package:salla/shared/style/colors.dart';
 
-class Product extends StatelessWidget {
+class Product extends StatefulWidget {
   static const String PRODUCT_SCREEN = 'product_layout';
+
+  @override
+  _ProductState createState() => _ProductState();
+}
+
+class _ProductState extends State<Product> {
+  @override
+  void initState() {
+    super.initState();
+    ProductCubit.get(context).getHomeProductData();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -91,7 +102,7 @@ class Product extends StatelessWidget {
                       discount: homeModel.data.products[index].discount,
                       favoriteIcon:
                           ProductCubit.get(context).favoriteHomeProduct[
-                                  homeModel.data.products[index].id]
+                                  homeModel.data.products[index].productId]
                               ? Icon(
                                   Icons.favorite,
                                   color: Colors.red,
@@ -100,23 +111,23 @@ class Product extends StatelessWidget {
                                   Icons.favorite_border,
                                   color: Colors.grey,
                                 ),
-                      isCart: ProductCubit.get(context)
-                          .cartHomeProduct[homeModel.data.products[index].id],
+                      isCart: ProductCubit.get(context).cartHomeProduct[
+                          homeModel.data.products[index].productId],
                       addCart: () {
                         ProductCubit.get(context).addOrRemoveCart(
                             ProductCubit.get(context).cartHomeProduct,
-                            homeModel.data.products[index].id);
+                            homeModel.data.products[index].productId);
                       },
                       addFavorite: () {
                         ProductCubit.get(context).addOrRemoveFavorite(
                             ProductCubit.get(context).favoriteHomeProduct,
-                            homeModel.data.products[index].id);
+                            homeModel.data.products[index].productId);
                       },
                       onPressed: () {
                         Navigator.of(context).push(
                           MaterialPageRoute(builder: (_) {
                             return ItemDetails(
-                              id: homeModel.data.products[index].id,
+                              id: homeModel.data.products[index].productId,
                             );
                           }),
                         );

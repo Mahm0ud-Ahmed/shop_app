@@ -3,7 +3,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:salla/model/user_model.dart';
-import 'package:salla/modules/settings/component/address_details.dart';
 import 'package:salla/modules/settings/component/address_screen.dart';
 import 'package:salla/modules/settings/cubit.dart';
 import 'package:salla/modules/settings/setting_state.dart';
@@ -13,8 +12,19 @@ import 'package:salla/shared/component/constants.dart';
 import 'package:salla/shared/network/local/salla_States.dart';
 import 'package:salla/shared/network/local/storage_pref.dart';
 
-class Setting extends StatelessWidget {
+class Setting extends StatefulWidget {
   static const String SETTING_SCREEN = 'setting_layout';
+
+  @override
+  _SettingState createState() => _SettingState();
+}
+
+class _SettingState extends State<Setting> {
+  @override
+  void initState() {
+    super.initState();
+    SettingCubit.get(context).getUserInfo();
+  }
 
   @override
   Widget build(BuildContext context) {

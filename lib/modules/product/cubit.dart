@@ -29,6 +29,7 @@ class ProductCubit extends Cubit<SallaStates> {
 
   CartStateModel cartStateModel;
   CartModel cartModel;
+  Map<int, int> quantity = {};
 
   Map<dynamic, bool> favoriteHomeProduct = {};
   Map<dynamic, bool> favoriteScreenProduct = {};
@@ -46,10 +47,10 @@ class ProductCubit extends Cubit<SallaStates> {
       homeModel = HomeModel.fromJson(value.data);
       // extractFavoriteAndCartFromProducts(homeModel);
       homeModel.data.products.forEach((element) {
-        favoriteHomeProduct.addAll({element.id: element.inFavorites});
+        favoriteHomeProduct.addAll({element.productId: element.inFavorites});
       });
       homeModel.data.products.forEach((element) {
-        cartHomeProduct.addAll({element.id: element.inCart});
+        cartHomeProduct.addAll({element.productId: element.inCart});
         // print(homeModel.data.products[0].name);
       });
       emit(SuccessProductState());
@@ -121,12 +122,14 @@ class ProductCubit extends Cubit<SallaStates> {
         .then((value) {
       cartModel = CartModel.fromJson(value.data);
       cartModel.data.productsCart.forEach((element) {
-        favoriteCartScreen.addAll(
-            {element.productCartInfo.id: element.productCartInfo.inFavorites});
-      });
-      cartModel.data.productsCart.forEach((element) {
-        cartScreenProduct.addAll(
-            {element.productCartInfo.id: element.productCartInfo.inCart});
+        favoriteCartScreen.addAll({
+          element.productCartInfo.productId: element.productCartInfo.inFavorites
+        });
+        cartScreenProduct.addAll({
+          element.productCartInfo.productId: element.productCartInfo.inCart
+        });
+        quantity.addAll({element.cartId: element.quantity});
+        // print(quantity);
       });
       // print(cartModel.data.productsCart[0].productCartInfo.price);
       emit(SuccessCartState());
@@ -163,6 +166,45 @@ class ProductCubit extends Cubit<SallaStates> {
     });
   }
 
+  Future<bool> quantityIncrement(int cartId) async {
+    String endPoint = END_POINT_UPDATE_CART + cartId.toString();
+    int currentQuantity = quantity[cartId] += 1;
+    emit(LoadingQuantityCartState());
+    try {
+      await SallaDioHelper.putData(
+          endPointUrl: endPoint,
+          token: token,
+          data: {'quantity': currentQuantity});
+      emit(IncrementQuantityCartState());
+      return true;
+    } on Exception catch (error) {
+      print(error.toString());
+      emit(ErrorQuantityCartState());
+      return false;
+    }
+  }
+
+  Future<bool> quantityDecrement(int cartId) async {
+    String endPoint = END_POINT_UPDATE_CART + cartId.toString();
+    int currentQuantity = quantity[cartId];
+    if (currentQuantity > 1) {
+      currentQuantity = quantity[cartId] -= 1;
+      emit(LoadingQuantityCartState());
+      try {
+        await SallaDioHelper.putData(
+            endPointUrl: endPoint,
+            token: token,
+            data: {'quantity': currentQuantity});
+        emit(DecrementQuantityCartState());
+        return true;
+      } on Exception catch (error) {
+        print(error.toString());
+        emit(ErrorQuantityCartState());
+      }
+    }
+    return false;
+  }
+
   getCategoryDetails({@required int categoryId}) {
     emit(LoadingCategoryDetailsState());
     // categoryDetails.data.products.clear();
@@ -172,10 +214,9 @@ class ProductCubit extends Cubit<SallaStates> {
         // print(value.data);
         categoryDetails = CategoryDetailsModel.fromJson(value.data);
         categoryDetails.data.products.forEach((element) {
-          favoriteCategoryDetails.addAll({element.id: element.inFavorites});
-        });
-        categoryDetails.data.products.forEach((element) {
-          cartCategoryDetails.addAll({element.id: element.inCart});
+          favoriteCategoryDetails
+              .addAll({element.productId: element.inFavorites});
+          cartCategoryDetails.addAll({element.productId: element.inCart});
         });
         emit(SuccessCategoryDetailsState());
       }
@@ -184,17 +225,4 @@ class ProductCubit extends Cubit<SallaStates> {
       emit(ErrorCategoryDetailsState());
     });
   }
-
-/*extractFavoriteAndCartFromProducts(allProduct) {
-    if (allProduct != null) {
-      allProduct.data.products.forEach((element) {
-        // print(element.id);
-        favoriteCategoryDetails.addAll({element.id: element.inFavorites});
-        favoriteHomeProduct.addAll({element.id: element.inFavorites});
-        cartProduct.add({element.id: element.inCart});
-      });
-      print(favoriteCategoryDetails.length);
-    }
-  }*/
-
 }

@@ -5,6 +5,7 @@ const String END_POINT_HOME = 'home';
 const String END_POINT_CATEGORY = 'categories/';
 const String END_POINT_FAVORITE = 'favorites';
 const String END_POINT_CART = 'carts';
+const String END_POINT_UPDATE_CART = 'carts/';
 const String END_POINT_PROFILE = 'profile';
 const String END_POINT_UPDATE_PROFILE = 'update-profile';
 const String END_POINT_SEARCH = 'products/search';
